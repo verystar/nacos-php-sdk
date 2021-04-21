@@ -26,7 +26,7 @@ composer update
 ## Usage
 
 ```php
-use Aliyun\ACM\Client;
+use Very\Nacos\Client;
 
 $client = new Client([
     "username"=>"***********",
