@@ -1,0 +1,26 @@
+{
+  "name": "verystar/nacos-php-sdk",
+  "description": "The alibaba nacos SDK for php",
+  "keywords": [
+    "nacos",
+    "verystar"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Xudong Cai",
+      "email": "fifsky@gmail.com"
+    }
+  ],
+  "require": {
+    "php": ">=5.6"
+  },
+  "require-dev": {
+      "phpunit/phpunit": "~5.7"
+  },
+  "autoload": {
+    "psr-4": {
+      "Very\\": "src/Very"
+    }
+  }
+}
