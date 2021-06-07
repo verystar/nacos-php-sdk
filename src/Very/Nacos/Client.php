@@ -32,8 +32,6 @@ class Client
         $this->server_addr   = isset($config['server_addr']) ? $config['server_addr'] : "";
         $this->nameSpace     = isset($config['namespace']) ? $config['namespace'] : "";
         $this->request       = new Request();
-
-        $this->initServer();
     }
 
 
@@ -106,6 +104,7 @@ class Client
      */
     public function getConfig($dataId, $group = "DEFAULT_GROUP")
     {
+        $this->initServer();
         return $this->callApi("/nacos/v1/cs/configs", [
             "tenant" => $this->nameSpace,
             "dataId" => $dataId,
