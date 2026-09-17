@@ -2,7 +2,9 @@
 <a href="https://packagist.org/packages/verystar/nacos-php-sdk"><img src="https://poser.pugx.org/verystar/nacos-php-sdk/d/total.svg" alt="Total Downloads"></a>
 <a href="https://packagist.org/packages/verystar/nacos-php-sdk"><img src="https://poser.pugx.org/verystar/nacos-php-sdk/v/stable.svg" alt="Latest Stable Version"></a>
 
-Aliyun Nacos SDK for PHP
+Nacos SDK for PHP
+
+> 基于 Nacos 3.x 接口：登录 `/nacos/v3/auth/user/login`，获取配置 `/nacos/v3/client/cs/config`，发布配置 `/nacos/v3/admin/cs/config`
 
 ## Install
 
@@ -40,9 +42,14 @@ $client = new Client([
 $ret = $client->getConfig("test","DEFAULT_GROUP");
 print_r($ret);
 
+//publish config (need admin permission)
+$client->publishConfig("test","hello verystar","DEFAULT_GROUP");
+
 //save config if config file not exists 
 $client->saveConfig("test","DEFAULT_GROUP","./config/db.php");
 ```
+
+> accessToken 会自动缓存并在过期前重新登录，无需手动处理；未配置 `username`/`password` 时按匿名方式访问（适用于未开启鉴权的 Nacos）。
 
 ## Exception
 if throw NacosException,the fetch configuration failed

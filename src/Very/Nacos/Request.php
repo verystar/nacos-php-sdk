@@ -16,6 +16,7 @@ class Request
     private $is_ajax     = false;
     private $referer     = null;
     private $curl_error;
+    private $curl_error_message;
     private $body;
     private $header;
     private $http_header = [];
@@ -46,6 +47,9 @@ class Request
             throw new \RuntimeException('CURL url is null:'.__FILE__);
         }
         $this->ch = curl_init();
+        if (!$this->ch) {
+            throw new \RuntimeException('CURL init fail');
+        }
         $this->defaultOptions($this->ch, $url);
         curl_setopt($this->ch, CURLOPT_CUSTOMREQUEST, $method);
         $is_file    = false;
@@ -77,9 +81,10 @@ class Request
             curl_setopt($this->ch, CURLOPT_HTTPHEADER, $this->http_header);
         }
 
-        $this->body       = curl_exec($this->ch);
-        $this->curl_error = curl_errno($this->ch);
-        $this->header     = curl_getinfo($this->ch);
+        $this->body               = curl_exec($this->ch);
+        $this->curl_error         = curl_errno($this->ch);
+        $this->curl_error_message = curl_error($this->ch);
+        $this->header             = curl_getinfo($this->ch);
         if (is_resource($this->ch)) {
             curl_close($this->ch);
         }
@@ -190,7 +195,7 @@ class Request
                 $post_data = is_array($post_data) ? http_build_query($post_data) : $post_data;
                 curl_setopt($conn[$i], CURLOPT_POSTFIELDS, $post_data);
 
-                if ($post_data{0} == "{") {
+                if ($post_data[0] == "{") {
                     curl_setopt($conn[$i], CURLOPT_HTTPHEADER, ['Content-Type:application/json']);
                 }
             }
@@ -215,7 +220,7 @@ class Request
     {
         $userAgent = 'Mozilla/4.0+(compatible;+MSIE+6.0;+Windows+NT+5.1;+SV1)';
 
-        if ($this->referer = null) {
+        if ($this->referer !== null) {
             curl_setopt($ch, CURLOPT_REFERER, $this->referer); //设置 referer
         }
         curl_setopt($ch, CURLOPT_URL, $url); //设置访问的url地址
@@ -254,6 +259,16 @@ class Request
         return $this->curl_error;
     }
 
+    /**
+     * curl 错误信息
+     *
+     * @return string
+     */
+    public function getErrorMessage()
+    {
+        return $this->curl_error_message ? $this->curl_error_message : (string)$this->curl_error;
+    }
+
     public function getBody()
     {
         return $this->body;
@@ -275,7 +290,7 @@ class Request
 
     public function getStatusCode()
     {
-        return $this->header['http_code'];
+        return isset($this->header['http_code']) ? $this->header['http_code'] : 0;
     }
 
     /**
